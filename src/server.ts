@@ -1,19 +1,3 @@
-// StalHub SC node worker: stateless executor for eAPI StalCraft requests.
-//
-// The backend (gateway) picks a token with free quota and forwards
-// the request here. The node performs the raw HTTPS call to the
-// eAPI base URL and returns the envelope { status, data }.
-//
-// Env:
-//   PORT              - listen port (default 3101)
-//   NODE_NAME         - human-readable name for logs (default "node")
-//   SC_NODE_SECRET    - bearer secret; backend stores it per-node as api_key.
-//                       Empty = no auth (dev only, never use in production)
-//   EAPI_BASE_URL     - upstream API (default https://eapi.stalcraft.net)
-//   EAPI_TIMEOUT_MS   - upstream request timeout (default 15000)
-//   LOG_REQUESTS      - "true" to log every executed request (default "false";
-//                       the token value is NEVER logged)
-
 const PORT = Number(process.env.PORT ?? 3101)
 const NODE_NAME = process.env.NODE_NAME ?? 'node'
 const SECRET = process.env.SC_NODE_SECRET ?? ''
