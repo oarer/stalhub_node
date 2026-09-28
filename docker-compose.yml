@@ -1,0 +1,46 @@
+# Example: two nodes on one host. To scale, duplicate a service
+# with a new name/port and register it in the backend admin:
+# POST /api/v1/admin/sc/nodes { name, base_url, api_key }
+#
+# Each node SHOULD have its own egress IP for real scaling
+# (separate VPS / NAT). Nodes on one host share the IP and only
+# add redundancy, not quota.
+
+services:
+  node-1:
+    container_name: stalhub_node_1
+    build: .
+    restart: unless-stopped
+    ports:
+      - "3101:3101"
+    environment:
+      PORT: 3101
+      NODE_NAME: node-1
+      SC_NODE_SECRET: ${SC_NODE_SECRET:?set SC_NODE_SECRET in .env}
+      EAPI_BASE_URL: ${EAPI_BASE_URL:-https://eapi.stalcraft.net}
+      EAPI_TIMEOUT_MS: ${EAPI_TIMEOUT_MS:-15000}
+      LOG_REQUESTS: ${LOG_REQUESTS:-false}
+    healthcheck:
+      test: ["CMD", "bun", "-e", "fetch('http://localhost:3101/health').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))"]
+      interval: 10s
+      timeout: 3s
+      retries: 5
+
+  node-2:
+    container_name: stalhub_node_2
+    build: .
+    restart: unless-stopped
+    ports:
+      - "3102:3101"
+    environment:
+      PORT: 3101
+      NODE_NAME: node-2
+      SC_NODE_SECRET: ${SC_NODE_SECRET:?set SC_NODE_SECRET in .env}
+      EAPI_BASE_URL: ${EAPI_BASE_URL:-https://eapi.stalcraft.net}
+      EAPI_TIMEOUT_MS: ${EAPI_TIMEOUT_MS:-15000}
+      LOG_REQUESTS: ${LOG_REQUESTS:-false}
+    healthcheck:
+      test: ["CMD", "bun", "-e", "fetch('http://localhost:3101/health').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))"]
+      interval: 10s
+      timeout: 3s
+      retries: 5
