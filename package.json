@@ -1,8 +1,6 @@
 {
 	"name": "stalhub_node",
 	"version": "1.0.0",
-	"description": "StalHub SC node worker — stateless executor for StalCraft eAPI requests",
-	"license": "GPL-3.0-only",
 	"scripts": {
 		"dev": "bun run --watch src/server.ts",
 		"start": "bun run src/server.ts"
